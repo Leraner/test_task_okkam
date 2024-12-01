@@ -1,9 +1,9 @@
+from typing import final
 from click import group
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.schemas import CreateRespondentModelSchema
 from database.models import RespondentModel
-from database.exceptions import DatabaseException
-from sqlalchemy import select, text, func, Float, cast
+from sqlalchemy import select, text, func, Float, cast, and_
 
 
 class RespondentDAL:
@@ -27,27 +27,36 @@ class RespondentDAL:
 
             groups.append(query.cte(f"group_{index}"))
 
-        result_query = (
+        intersection = (
             select(
-                cast(func.count(groups[1].c.respondent), Float)
-                / cast(func.count(groups[0].c.respondent), Float)
+                cast(
+                    func.sum(groups[1].c.group_1_weight),
+                    Float,
+                )
+                / cast(
+                    func.sum(groups[0].c.group_0_weight),
+                    Float,
+                ),
             )
             .select_from(groups[0])
             .join(
                 groups[1],
-                groups[1].c.respondent == groups[0].c.respondent,
+                and_(
+                    groups[1].c.group_1_weight == groups[0].c.group_0_weight,
+                    groups[1].c.respondent == groups[0].c.respondent,
+                ),
                 isouter=True,
             )
         )
 
-        result = await self.db_session.execute(result_query)
+        result = await self.db_session.execute(intersection)
 
         rows = result.scalar()
 
         if rows is not None:
             return float(rows)
-        
-        raise DatabaseException(message="Результат не был получен")
+
+        return 0
 
     async def insert_database_dump(self, instances: list[CreateRespondentModelSchema]):
         models = [RespondentModel(**instance.model_dump()) for instance in instances]

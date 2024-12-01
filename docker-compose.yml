@@ -29,6 +29,8 @@ services:
       python3 main.py"
     ports:
       - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - .:/src
     depends_on:
       database:
         condition: service_healthy

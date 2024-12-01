@@ -3,8 +3,7 @@ import sqlalchemy
 from .base.base_router import RegisterRoutes
 from database.db import Database
 from database.schemas import CreateRespondentModelSchema
-from database.exceptions import DatabaseException
-from fastapi import UploadFile, HTTPException
+from fastapi import UploadFile
 from datetime import datetime
 import pandas as pd
 import io
@@ -25,11 +24,7 @@ class PrecentRouter(RegisterRoutes):
                 audience1=audience1, audience2=audience2
             )
         except sqlalchemy.exc.DBAPIError:
-            return {
-                "error": "В первой группе нет респондентов либо указан неверный фильтр в audience"
-            }
-        except DatabaseException as e:
-            return {"error": e.message}
+            return {"error": "Введен неправильный фильтр"}
         return result
 
     @classmethod
