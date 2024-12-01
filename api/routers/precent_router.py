@@ -20,7 +20,7 @@ class PrecentRouter(RegisterRoutes):
         try:
             result = await cls.database.get_precent(audience1=audience1, audience2=audience2)
         except sqlalchemy.exc.DBAPIError:
-            return {"error": "В первой группе нет респондентов"}
+            return {"error": "В первой группе нет респондентов либо указан неверный фильтр в audience"}
         except DatabaseException as e:
             return {"error": e.message}
         return result
