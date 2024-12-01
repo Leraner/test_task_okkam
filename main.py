@@ -1,15 +1,21 @@
 from fastapi import FastAPI
 import uvicorn
 import settings
-from api.routers import PrecentRouter
+from api import PercentRouter
+from management import StartUpCommands
 
-
-routers = [PrecentRouter]
+routers = [PercentRouter]
 
 app = FastAPI(root_path="/api")
 
 for router in routers:
     app.include_router(router().create_router())
+
+
+@app.on_event("startup")
+async def startup():
+    commands = StartUpCommands()
+    await commands.init_database()
 
 
 if __name__ == "__main__":

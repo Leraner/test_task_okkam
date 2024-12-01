@@ -1,4 +1,4 @@
-from .precent_dal import RespondentDAL
+from .percent_dal import RespondentDAL
 
 
 __all__: list[str] = [

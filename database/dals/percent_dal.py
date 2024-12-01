@@ -1,17 +1,15 @@
-from typing import final
-from click import group
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.schemas import CreateRespondentModelSchema
 from database.models import RespondentModel
-from sqlalchemy import select, text, func, Float, cast, and_
+from sqlalchemy import select, text, func, Float, cast, and_, exists
 
 
 class RespondentDAL:
     def __init__(self, db_session: AsyncSession) -> None:
         self.db_session = db_session
 
-    async def get_precent(
-        self, audience1: str | None = None, audience2: str | None = None
+    async def get_percent(
+            self, audience1: str | None = None, audience2: str | None = None
     ) -> float:
 
         groups = []
@@ -58,7 +56,13 @@ class RespondentDAL:
 
         return 0
 
-    async def insert_database_dump(self, instances: list[CreateRespondentModelSchema]):
+    async def check_on_empty(self) -> bool:
+        query = select(exists(RespondentModel))
+
+        result = await self.db_session.execute(query)
+        return bool(result.scalar())
+
+    async def insert_database_dump(self, instances: list[CreateRespondentModelSchema]) -> None:
         models = [RespondentModel(**instance.model_dump()) for instance in instances]
         self.db_session.add_all(models)
         await self.db_session.commit()
