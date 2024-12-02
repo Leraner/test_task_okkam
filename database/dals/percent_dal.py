@@ -40,8 +40,8 @@ class RespondentDAL:
             .join(
                 groups[1],
                 and_(
-                    groups[1].c.group_1_weight == groups[0].c.group_0_weight,
                     groups[1].c.respondent == groups[0].c.respondent,
+                    groups[1].c.group_1_weight == groups[0].c.group_0_weight
                 ),
                 isouter=True,
             )

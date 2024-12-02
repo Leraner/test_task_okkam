@@ -8,10 +8,10 @@ from .utils import SingletonMeta
 class Database(metaclass=SingletonMeta):
     @DatabaseConnection.create_session
     async def get_percent(
-            self,
-            db_session: AsyncSession,
-            audience1: str | None = None,
-            audience2: str | None = None,
+        self,
+        db_session: AsyncSession,
+        audience1: str | None = None,
+        audience2: str | None = None,
     ) -> PercentModelSchema:
         respondent_dal = RespondentDAL(db_session=db_session)
         percent = await respondent_dal.get_percent(
@@ -26,7 +26,7 @@ class Database(metaclass=SingletonMeta):
 
     @DatabaseConnection.create_session
     async def insert_database_data(
-            self, instances: list[CreateRespondentModelSchema], db_session: AsyncSession
+        self, instances: list[CreateRespondentModelSchema], db_session: AsyncSession
     ) -> None:
         respondent_dal = RespondentDAL(db_session=db_session)
         await respondent_dal.insert_database_dump(instances=instances)
