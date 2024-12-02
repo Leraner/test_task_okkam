@@ -4,7 +4,7 @@
 ### Запуск проекта
 
 ```
-git clone git@github.com:Leraner/test_task_okkam.git
+git clone https://github.com/Leraner/test_task_okkam.git
 
 cd test_task_okkam/
 
