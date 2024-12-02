@@ -1,4 +1,4 @@
-from .routers import PercentRouter
+from .precent_router import PercentRouter
 
 __all__: list[str] = [
     "PercentRouter",
